@@ -1,44 +1,36 @@
 import React, { useState } from 'react';
+// import uuid from "uuid";
+import { v4 as uuidv4 } from 'uuid';
 import './App.css';
-import Message from './components/Message'; /** Messageコンポーネントを配置。 */
-import NameForm from './components/NameForm';
+import Todo from './components/Todo';
+import TodoForm from './components/TodoForm';
 
 function App() {
-  const message = "Hello, React!";
-  const libraries = [
-    "jQuery",
-    "React",
-    "Vue.js"
-  ];
-  // ユーザー情報を入力
-  const [name, setName] = useState("");
-  const handleTextInput = (e) => {
-    setName(e.target.value);
-  }
+  const [todos, setTodos] = useState([
+    {
+      ID: 1,
+      Content: "hoge",
+      Done: true,
+      CreatedAt: (new Date()).toISOString(),
+      UpdatedAt: (new Date()).toISOString(),
+    },
+  ]);
+
+  const handleCreate = data => {
+    // IDを自動採番
+    // data.ID = uuid.v4();
+    data.ID = uuidv4();   /** uuidのバージョンが対応していないため変更。 */
+    const now = (new Date()).toISOString();
+    data.CreatedAt = now;
+    data.UpdatedAt = now;
+    // 末尾に追加
+    setTodos([...todos, data]);
+  };
 
   return (
     <div className="App">
-      <header className='App-header'>
-        {/* 定義したmessageを表示。 */}
-        <p>{message}</p>
-
-        {/* 定義した配列を表示。 */}
-        {libraries.map(item => <p>{item}</p>)}
-
-        {/* Messageコンポーネントを配置。 */}
-        <Message name="tanaka" />
-        <Message name="hashimoto" />
-        <Message name="sato" />
-
-        {/* テキストを入力 */}
-        {/* <input type='text' onChange={handleTextInput} />
-        <Message name={name} /> */}
-
-        {/* NameFormコンポーネント */}
-        <NameForm name={name} onChangeName={value => setName(value)} />
-        <Message name={name} />
-
-      </header>
+      <TodoForm onSave={handleCreate} />
+      {todos.map(item => <Todo key={item.ID} {...item} /> )}
     </div>
   );
 }
